@@ -1,0 +1,48 @@
+import React, { createContext, useCallback, useState, useContext } from 'react';
+
+import Services, { IRequestNameFunction } from './services';
+import * as S from './styles'
+
+interface INameFunction {
+  example: string;
+}
+
+interface IState {
+  example: string;
+}
+
+interface I{{pascalCase name}}ContextData {
+  state: IState;
+  nameFunction(data: INameFunction): Promise<void>;
+}
+
+const {{pascalCase name}}Context = createContext<I{{pascalCase name}}ContextData>(
+  {} as I{{pascalCase name}}ContextData,
+);
+
+export const {{pascalCase name}}Provider: React.FC = ({ children }) => {
+  const [state, setstate] = useState<IState>(() => {
+    // const example = localStorage.getItem('@amex:example');
+
+    return { example: '' } as IState;
+  });
+
+  const nameFunction = useCallback(async ({ example }: INameFunction) => {
+    setstate({ example });
+  }, []);
+
+  return (
+    <{{pascalCase name}}Context.Provider value={ state, nameFunction }>
+      {children}
+    </{{pascalCase name}}Context.Provider>
+  );
+};
+
+export function use{{pascalCase name}}(): I{{pascalCase name}}ContextData {
+  const context = useContext({{pascalCase name}}Context);
+
+  if (!context) {
+    throw new Error('use{{pascalCase name}} must be used within an {{pascalCase name}}Provider');
+  }
+  return context;
+}

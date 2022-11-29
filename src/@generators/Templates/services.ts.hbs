@@ -1,0 +1,38 @@
+import api from '@http/api';
+
+export interface IRequestNameFunction {
+  data: {
+    example: string;
+  };
+}
+
+interface IResponseNameFunction {
+  error: boolean;
+  response?: any;
+}
+
+interface IResponseAxiosNameFunction {
+  example: any;
+}
+
+class Services {
+  public async nameFunction({
+    data,
+  }: IRequestNameFunction): Promise<IResponseNameFunction> {
+    return await api
+      .get<IResponseAxiosNameFunction[]>('api/...')
+      .then(response => {
+        return {
+          error: false,
+          response: response.data,
+        };
+      })
+      .catch(error => {
+        return {
+          error: true,
+        };
+      });
+  }
+}
+
+export default Services;
