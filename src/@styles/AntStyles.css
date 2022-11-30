@@ -32,7 +32,8 @@
   position: relative;
   background-color: #f1f1f1 !important;
   border: 1px solid #d9d9d9;
-  border-radius: 2px;
+  height: 40px;
+  border-radius: 10px;
   -webkit-transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
   transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
@@ -60,6 +61,8 @@
   .ant-select-selector
   .ant-select-selection-search-input {
   background-color: #f1f1f1 !important;
+  height: 40px;
+
 }
 
 .ant-input-affix-wrapper {
@@ -69,7 +72,8 @@
 .ant-input {
   background-color: #f1f1f1 !important;
   text-align: center;
-  border-radius: 0px;
+  border-radius: 10px;
+  height: 40px;
 }
 
 .ant-form-vertical .ant-form-item {
@@ -149,6 +153,7 @@
   .ant-select-selector
   .ant-select-selection-search-input {
   background-color: #f1f1f1 !important;
+  height: 40px;
 }
 
 .ant-input-affix-wrapper {

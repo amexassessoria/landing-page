@@ -153,7 +153,6 @@ const EstadoCidadeInputs: React.FC<IProps> = ({
         <Form.Item
           name="estado_descricao"
           label="Estado"
-          hasFeedback
           rules={[
             {
               required: false,
@@ -196,7 +195,6 @@ const EstadoCidadeInputs: React.FC<IProps> = ({
         <Form.Item
           name="cidade_id"
           label="Cidade"
-          hasFeedback
           rules={[
             {
               required: false,

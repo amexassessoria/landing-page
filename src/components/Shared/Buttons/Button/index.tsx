@@ -36,7 +36,8 @@ const ButtonComponent: React.FC<IButtonProps> = ({
           ? getColors().cinzaEscuro
           : getColors().cinzaClaro,
       color: getColors()?.branco,
-      borderRadius: 0,
+      borderRadius: 10,
+      borderColor: '#000',
       '&:disabled': {
         backgroundColor: disabledColor ? disabledColor : '#84c5f080',
       },

@@ -1,5 +1,5 @@
 const theme: 'light' = 'light';
- 
+
 interface IColors {
   azulClaro: string;
   azulEscuro: string;
@@ -8,10 +8,10 @@ interface IColors {
   branco: string;
   vermelho: string;
 }
- 
+
 export const getColors = (): IColors => {
   return {
-    azulClaro: '#84C5F0',
+    azulClaro: '#567220',
     azulEscuro: '#40455A',
     cinzaEscuro: '#616161',
     cinzaClaro: '#f1f1f166',
