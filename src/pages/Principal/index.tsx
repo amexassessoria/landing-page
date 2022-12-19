@@ -9,7 +9,7 @@ import Footer from '@components/Shared/Footer/Footer';
 
 
 import { Grid } from '@material-ui/core';
-import { Form, Input, Spin, Radio, Select as SelectAntd } from 'antd';
+import { Form, Input, Spin, Radio, Select as SelectAntd, Switch, Checkbox } from 'antd';
 
 import ButtonComponent from '@components/Shared/Buttons/Button';
 
@@ -19,46 +19,42 @@ import InvisibleContent from '@components/Shared/InvisibleContent';
 import { Empty } from 'antd';
 import '@styles/AntStyles.css';
 
-import Services from './services';
+import Service, {
+  IRequestCreatePessoa,
+} from './services';
 import { MaskCPFeCNPJ } from '@utils/Masks';
 import { validaCPFandCNPJ } from '@utils/Validators';
 import { AddOutlined, Visibility } from '@material-ui/icons';
-import { format, addDays, subDays } from 'date-fns';
+import { format, addDays, subDays, isThisQuarter } from 'date-fns';
 import SearchCEPCorreios from '@utils/SearchCEPCorreios';
-import InputEstadoCidade from '@components/Shared/EstadoCidadeInputs';
+import { isReal, ClearString } from '@utils/Masks';
+
 
 import useDebounce from '@hooks/useDebounce';
+import { create } from 'domain';
 
-const tiposFiltros = ['Boleto', 'Pix', 'Cartão de credito'];
 
-const DATA = addDays(new Date(), 0).toISOString().split('T')[0];
 
 const Principal: React.FC = () => {
-  const history = useHistory();
 
-  const [formref] = Form.useForm();
   const [formPessoaRef] = Form.useForm();
+  const [formRef] = Form.useForm();
+  const [stringDebitoStatus, setStringDebitoStatus] = useState<string>('');
 
-  const [formRef2] = Form.useForm();
 
-  const [idExists, setIdExists] = useState(0);
-  const [showButtonViewPessoa, setShowButtonViewPessoa] = useState(false);
   const [loadingCreatePessoa, setLoadingCreatePessoa] = useState(false);
-  const [pessoaId, setPessoaId] = useState<number>();
 
   const [tipoDocumento, setTipoDocumento] = useState<'pf' | 'pj'>('pf');
 
   const [valorModifyValorDebito, setValorModifyValorDebito] =
   useState<string>('');
 
-  const [uf, setUF] = useState<any>();
-  const [cidadeId, setCidadeID] = useState(0);
-  const [cidadeLabel, setCidadeLabel] = useState('');
   const [loadingCEP, setLoadingCEP] = useState(false);
+  const [uf, setUF] = useState<any>();
+
+  const [formValues, setFormValues] = useState({});
 
 
-
-  const [formaContribuicao, setFormaContribuicao] = useState< 'Boleto' | 'Pix' | 'Cartão de credito'>();
 
   function handleInput(e: any) {
     var ss = e.target.selectionStart;
@@ -68,30 +64,77 @@ const Principal: React.FC = () => {
     e.target.selectionEnd = se;
   };
 
-  const onFinish = async (values: any) => {
+  const handleInputChange = (e: any) => {
+  const {name, type, value, checked} = e.target;
+  const isCheckbox = type === 'checkbox';
 
+  setFormValues ({...formValues, [name]: checked});
+  };
 
+   async function onSubmit(values: any) {
     setLoadingCreatePessoa(true);
-    const services = new Services();
 
-    values.tipoDocumento = tipoDocumento;
-    values.status_ativo = 1;
+    console.log(values);
 
-    const { error, response } = await services.CreatePessoa(values);
 
-    if (!error && response !== null) {
-      setPessoaId(response.id);
-      formref.setFieldsValue({
-        id: response.id,
-      });
+    const services = new Service();
+    const createPessoa: IRequestCreatePessoa = {
+      pessoa: {
+        nome: values.nome,
+        cpfcnpj: values.cpfcnpj,
+        email: values.email,
+        telefone: values.telefone,
+      },
+      doacao: {
+        valor: values.valor,
+        cartao: values.cartao === undefined
 
+          ?false
+          :true,
+        boleto: values.boleto === undefined
+        ?false
+        :true,
+        pix: values.pix  === undefined
+        ?false
+        :true,
+        recorrente: values.recorrente  === undefined
+          ?false
+          :true,
+      },
+      endereco: {
+        descricao: values.descricao,
+        numero: values.numero,
+        complemento: values.complemento,
+        bairro: values.bairro,
+        cidade: values.cidade,
+        cep: values.cep,
+        uf: values.uf,
+      },
+      entidade: {
+        nome: 'esdras'
+      },
+      campanha:{
+        descricao: 'teste',
+      }
+    };
+
+    console.log('entrou aqui')
+
+    const { error, response } = await services.CreatePessoa(createPessoa);
+
+    if (!error) {
+
+      //window.alert(response);
+      window.open(response);
 
     } else {
+      window.alert( error);
 
     }
 
     setLoadingCreatePessoa(false);
-  };
+
+  }
 
   const searchCEPDebounce = async (value: string) => {
     const searchCEPCorreios = new SearchCEPCorreios();
@@ -102,10 +145,10 @@ const Principal: React.FC = () => {
     if (!error && response) {
       setUF(response.uf);
       formPessoaRef.setFieldsValue({
-        endereco: response.logradouro,
+        descricao: response.logradouro,
         bairro: response.bairro,
-        estado_descricao: response.uf,
-        cidade_id: response.localidade,
+        uf: response.uf,
+        cidade: response.localidade,
       });
     }
   };
@@ -119,7 +162,7 @@ const Principal: React.FC = () => {
     setTipoDocumento(typeDocument);
 
     formPessoaRef.setFieldsValue({
-      documento: valueModify,
+      cpfcnpj: valueModify,
     });
 
     if (typeDocument === 'pj') {
@@ -140,17 +183,18 @@ const Principal: React.FC = () => {
   };
 
 
+
   return (
     <>
      <Grid container alignItems="center" justify="center">
-        <Grid container item sm={8} style={{marginTop: 35}}>
+        <Grid container item sm={8} style={{marginTop: 35}} justify="center" >
         <Grid item lg={1} sm={1} xs={12}>
 
           </Grid>
-        <Grid item lg={3} sm={3} xs={12}>
+        <Grid item lg={3} sm={5} xs={12}>
         <img src={LogoCLickDoBem} style={{ width: 210 }} />
           </Grid>
-          <Grid item lg={8} sm={8} xs={12} style={{marginTop: 40}}>
+          <Grid item lg={8} sm={8} xs={12} style={{marginTop: 40}} justify="center" >
             <TitlePage>Através da sua doação, levaremos alegria, amor e esperança para todos animaizinhos.</TitlePage>
           </Grid>
 
@@ -172,7 +216,7 @@ const Principal: React.FC = () => {
               size="middle"
               layout="vertical"
               scrollToFirstError={true}
-              onFinish={onFinish}
+              onFinish={onSubmit}
               labelAlign="left"
               labelCol={{
                 span: 24,
@@ -192,7 +236,7 @@ const Principal: React.FC = () => {
                   <Form.Item
                     label="Documento *"
 
-                    name="documento"
+                    name="cpfcnpj"
                     rules={[
                       { required: true, message: 'Campo obrigatório' },
                       { min: 14, message: 'Minimo 14 caracteres' },
@@ -205,7 +249,7 @@ const Principal: React.FC = () => {
                         onChangeDocumento(e);
 
                       }}
-                      placeholder="Documento"
+                      //placeholder="Documento"
                     />
                   </Form.Item>
 
@@ -271,7 +315,8 @@ const Principal: React.FC = () => {
                         name="email"
                         rules={[
                           { required: true, message: 'Campo obrigatório' },
-                          { min: 3, message: 'Mínimo de 3 letras' },
+                          {  pattern: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
+                            message: 'Por favor digite um e-mail válido!' },
 
                         ]}
                         style={{ paddingLeft: 10, paddingRight: 10 }}
@@ -286,23 +331,40 @@ const Principal: React.FC = () => {
                       <Grid item lg={6} xs={12}>
 
                       <Form.Item
-                        label='Telefone *'
+                        label='Celular *'
 
                         name="telefone"
                         rules={[
                           { required: true, message: 'Campo obrigatório' },
-                          { min: 3, message: 'Mínimo de 3 letras' },
 
                         ]}
                         style={{ paddingLeft: 10, paddingRight: 10 }}
                       >
-                        <Input
-
-                        />
+                        <MaskedInput
+                        mask="(11) 11111-1111"
+                        //placeholder="Celular"
+                      />
                       </Form.Item>
                       </Grid>
 
                 </Grid>
+
+
+                {/* ------------------------ DOAÇÃO -------------------------------------------------- */}
+
+
+                <Grid item container justify="space-around" sm={12} xs={12} style={{marginTop: 15}}>
+
+                      <Form.Item
+                        name="recorrente"
+                      >
+                        <label><Input type="checkbox" value="recorrente"
+                        /> Doação mensal</label>
+
+                      </Form.Item>
+
+                </Grid>
+
         {/* ------------------------ PAGAMENTO -------------------------------------------------- */}
                 <p style={{marginTop: 15}}>Digite o valor da doação *</p>
                 <Grid container justify="center" >
@@ -313,159 +375,195 @@ const Principal: React.FC = () => {
                       { required: true, message: 'Campo obrigatório' },
                     ]}
                   >
-                  <Input
 
-                        placeholder='Valor doação'
+                      <Input placeholder='Valor da doação'
+                        onChange={(e: any) => {
+                          formRef.setFieldsValue({
+                            valor: isReal(e.target.value),
+                          });
+                          setValorModifyValorDebito(e.target.value);
+                        }}
                       />
+
                   </Form.Item>
                 </Grid>
                 </Grid>
 
                 <p style={{marginTop: 15}}> Selecione a forma de pagamento *</p>
                 <Grid container justify="center" >
-                <Grid item  lg={6} sm={6} xs={12}>
-                  <Form.Item
-                    name="formaContrib"
-                    rules={[
-                      { required: true, message: 'Campo obrigatório' },
-                    ]}
-                  >
-                 <SelectAntd
-                        placeholder="Forma de contribuição."
-                        onChange={(e: any) => {
-                          if (e === 'Boleto' || e === 'Pix' || e === 'Cartão de credito') {
-                            setFormaContribuicao(e);
-                          }
-                        }}
+                  <Grid container justify="center" >
+                  <Grid item  lg={3} sm={3} xs={12}>
+                      <Form.Item
+                        name="boleto"
                       >
-                        {tiposFiltros.map(option => (
-                          <SelectAntd.Option key={option} value={option}>
-                          {option}
-                          </SelectAntd.Option>
-                        ))}
-                      </SelectAntd>
-                  </Form.Item>
-                </Grid>
+                        <label><Input type="checkbox" value="boleto" onChange={handleInputChange}/> Boleto</label>
+
+                      </Form.Item>
+                    </Grid>
+
+                    <Grid item  lg={3} sm={3} xs={12}>
+                      <Form.Item
+                        name="pix"
+                      >
+                        <label><Input type="checkbox" value="pix"  onChange={handleInputChange}/> Pix</label>
+
+                      </Form.Item>
+                    </Grid>
+
+                     <Grid item  lg={3} sm={3} xs={12}>
+                      <Form.Item
+                        name="cartao"
+                      >
+                        <label><Input type="checkbox" value="cartao"  onChange={handleInputChange}/> Cartão de crédito</label>
+
+                      </Form.Item>
+                    </Grid>
+
+                  </Grid>
 
                 {/* ------------------------ ENDEREÇO -------------------------------------------------- */}
 
-                <InvisibleContent
-                    visible={formaContribuicao === 'Cartão de credito'}
-                  >
-                    <>
+                  {/*
+                    <InvisibleContent
+                      visible={formaContribuicao === 'Cartão de credito'}
+                    >
+                      <>
+                      */}
 
-                    <Grid container>
-                      <p style={{marginTop: 15}}>Completar informações</p>
-                    </Grid>
+                      <Grid container>
+                        <p style={{marginTop: 15}}>Completar informações</p>
+                      </Grid>
 
-                      <Spin spinning={loadingCEP} tip="Buscando dados do CEP">
-                        <Grid container>
+                        <Spin spinning={loadingCEP} tip="Buscando dados do CEP">
                           <Grid container>
-                          {/* { cep, uf, cidade } */}
-                              <Grid item lg={4} xs={12}>
-                                <Form.Item label="CEP"  name="cep">
-                                  <MaskedInput
-                                    mask="11111-111"
-                                    placeholder="CEP"
-                                    onChange={(e: any) => debounceCEP(e.target.value)}
-                                  />
-                                </Form.Item>
+                            <Grid container>
+                            {/* { cep, uf, cidade } */}
+                                <Grid item lg={4} xs={12}>
+                                  <Form.Item
+                                    label="CEP"
+                                    name="cep"
+                                    rules={[
+                                      { required: true, message: 'Campo obrigatório' }
+                                    ]}
+                                  >
+                                    <MaskedInput
+                                      mask="11111-111"
+                                      placeholder="CEP"
+                                      onChange={(e: any) => debounceCEP(e.target.value)}
+                                    />
+                                  </Form.Item>
+                                </Grid>
                               </Grid>
+
+                              <Grid item lg={4} xs={12}>
+                              <Form.Item
+                                label="Estado"
+                                name="uf"
+                                rules={[{ required: true, message: "Campo obrigatório" }]}
+                              >
+                                <Input placeholder="Estado" />
+                              </Form.Item>
                             </Grid>
 
-                          <InputEstadoCidade
-                            ufProps={uf}
-                           // cidadeID={cidadeId}
-                            cidadeLabel={cidadeLabel}
-                            formRef={formRef2}
-                          />
-                          {/* { cep, uf, cidade } */}
+                            <Grid item lg={4} xs={12}>
+                              <Form.Item
+                                label="Cidade"
+                                name="cidade"
+                                rules={[{ required: true, message: "Campo obrigatório" }]}
+                              >
+                                <Input placeholder="Cidade" />
+                              </Form.Item>
+                            </Grid>
 
-                          {/* { endereço, numero } */}
+                            {/* { cep, uf, cidade } */}
 
-                          <Grid item lg={4} xs={12}>
-                            <Form.Item
-                              label="Endereço"
-                              name="endereco"
-                              rules={[{ required: false }]}
-                            >
-                              <Input placeholder="Endereço" />
+                            {/* { endereço, numero } */}
+
+                            <Grid item lg={4} xs={12}>
+                              <Form.Item
+                                label="Endereço"
+                                name="descricao"
+                                rules={[{ required: true, message: "Campo obrigatório" }]}
+                              >
+                                <Input placeholder="Endereço" />
+                              </Form.Item>
+                            </Grid>
+                            {/* { endereço, numero } */}
+
+                            {/* { complemento, bairro } */}
+
+                            <Grid item sm={4} xs={12}>
+                              <Form.Item
+                                label="Número"
+                                name="numero"
+                              >
+                                <Input placeholder="Número" />
+                              </Form.Item>
+                            </Grid>
+
+                            <Grid item sm={4} xs={12}>
+                              <Form.Item
+                                label="Complemento"
+                                name="complemento"
+                                  rules={
+                                    [
+                                      { required: true, message: "Campo obrigatório" },
+                                      { max: 45, message: 'Máximo de 45 caracteres' },
+                                    ]
+                                  }
+                              >
+                                <Input onInput={handleInput} placeholder="Complemento" />
+                              </Form.Item>
+                            </Grid>
+
+                            <Grid item sm={4} xs={12}>
+                              <Form.Item
+                                label="Bairro"
+                                name="bairro"
+                                rules={[{ required: false }]}
+                              >
+                              <Input placeholder="Bairro" />
                             </Form.Item>
                           </Grid>
-                          {/* { endereço, numero } */}
-
-                           {/* { complemento, bairro } */}
-
-                          <Grid item sm={3} xs={12}>
-                            <Form.Item
-                              label="Complemento"
-                              name="numero"
-                                rules={
-                                  [
-
-                                    { max: 45, message: 'Máximo de 45 caracteres' },
-                                  ]
-                                }
-                            >
-                              <Input onInput={handleInput} placeholder="Complemento" />
-                            </Form.Item>
-                          </Grid>
-
-                          <Grid item sm={3} xs={12}>
-                            <Form.Item
-                              label="Bairro"
-                              name="bairro"
-                              rules={[{ required: false }]}
-                            >
-                            <Input placeholder="Bairro" />
-                          </Form.Item>
                         </Grid>
-                      </Grid>
-                     </Spin>
+                      </Spin>
+                    {/*   </>
+                    </InvisibleContent>*/}
+
+                 {/* ------------------------ DADOS OCULTOS -------------------------------------------------- */}
+
+
+                    <InvisibleContent
+                      visible={stringDebitoStatus === 'Cartão de credito'}
+                    >
+                      <>
+                          <Grid container>
+
+                            <Grid item sm={3} xs={12}>
+                              <Form.Item
+                                label="Campanha"
+                                name="campanha"
+
+                              >
+                                <Input value={"campanha"} />
+                              </Form.Item>
+                            </Grid>
+
+                            <Grid item sm={3} xs={12}>
+                              <Form.Item
+                                label="Entidade"
+                                name="entidade"
+                                rules={[{ required: false }]}
+                              >
+                              <Input value={"entidade"} />
+                            </Form.Item>
+                          </Grid>
+                        </Grid>
+
                     </>
-                  </InvisibleContent>
+                    </InvisibleContent>
 
                 </Grid>
-
-
-
-                {/* <Grid
-                  item
-                  lg={12}
-                  xs={12}
-                  style={{ paddingRight: 10, paddingLeft: 10 }}
-                >
-                  <Form.Item
-                    label="Origem inicial"
-                    hasFeedback
-                    name="origem_inicial"
-                    rules={[
-                      { required: true, message: 'Campo obrigatorio' },
-                      { min: 3, message: 'Minimo de 3 letras' },
-                    ]}
-                  >
-                    <Input placeholder="Origem inicial" />
-                  </Form.Item>
-                </Grid>
-
-                <Grid
-                  item
-                  lg={12}
-                  xs={12}
-                  style={{ paddingRight: 10, paddingLeft: 10 }}
-                >
-                  <Form.Item
-                    label="Motivo inicial"
-                    hasFeedback
-                    name="motivo_inicial"
-                    rules={[
-                      { required: true, message: 'Campo obrigatorio' },
-                      { min: 3, message: 'Minimo de 3 letras' },
-                    ]}
-                  >
-                    <Input placeholder="Motivo inicial" />
-                  </Form.Item>
-                </Grid> */}
 
                 <Grid container justify="center" >
                 <Grid
@@ -477,7 +575,6 @@ const Principal: React.FC = () => {
                 >
                   <ButtonComponent
                     color="primary"
-                    disabled={!pessoaId ? loadingCreatePessoa : true}
                     loading={loadingCreatePessoa}
                     fullWidth
                     type="submit"
@@ -492,9 +589,7 @@ const Principal: React.FC = () => {
         </Grid>
         {/* FORMULARIO  */}
         <Footer />
-        {/* Component Perfil */}
 
-        {/* Component Perfil */}
       </Grid>
     </>
   );

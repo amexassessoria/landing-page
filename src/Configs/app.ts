@@ -10,7 +10,7 @@
 //export const UrlServerAPI = valueURLFIX;
 
 
-const valueURL = 'http://localhost:5000/';
+const valueURL = 'http://186.237.14.252:5000/api/site/CriarCadastroComCobranca/';
 const valueURLFIX =
   valueURL.slice(-1) == '/'
     ? valueURL.substr(0, valueURL.length - 1)
