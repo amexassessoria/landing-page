@@ -132,6 +132,7 @@ const Principal: React.FC = () => {
       window.alert( "HOUVE UM ERRO");
 
     }
+
     //window.location.reload();
 
     setLoadingCreatePessoa(false);
@@ -514,8 +515,13 @@ const Principal: React.FC = () => {
                               <Form.Item
                                 label="Número"
                                 name="numero"
+                                rules={
+                                  [
+                                    {required: true,  message: "Campo obrigatório"}
+                                  ]
+                                }
                               >
-                                <Input placeholder="Número" />
+                                <Input type={"number"} placeholder="Número" />
                               </Form.Item>
                             </Grid>
 

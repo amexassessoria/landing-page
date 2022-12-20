@@ -3,7 +3,7 @@ import { UrlServerAPI } from '@src/Configs/app';
 import { request } from 'https';
 
 const api = axios.create({
-   baseURL: 'http://186.237.14.252:5000/',
+   baseURL: 'https://sociallis-landing-page.azurewebsites.net/',
   // method: 'POST',
    //headers: {"Content-Type":"application/json"},
 
