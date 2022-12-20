@@ -32,6 +32,7 @@ import { isReal, ClearString } from '@utils/Masks';
 
 import useDebounce from '@hooks/useDebounce';
 import { create } from 'domain';
+import { number } from 'yup';
 
 
 
@@ -86,9 +87,9 @@ const Principal: React.FC = () => {
         telefone: values.telefone,
       },
       doacao: {
-        valor: values.valor,
-        cartao: values.cartao === undefined
+        valor: ClearString(valorModifyValorDebito) / 100 * 100,
 
+        cartao: values.cartao === undefined
           ?false
           :true,
         boleto: values.boleto === undefined
@@ -128,11 +129,13 @@ const Principal: React.FC = () => {
       window.open(response);
 
     } else {
-      window.alert( error);
+      window.alert( "HOUVE UM ERRO");
 
     }
+    //window.location.reload();
 
     setLoadingCreatePessoa(false);
+
 
   }
 
@@ -225,6 +228,19 @@ const Principal: React.FC = () => {
                 span: 24,
               }}
               requiredMark={false}
+              initialValues={{
+                nome: '',
+                cpfcnpj: '',
+                email: '',
+               //valor: 0,
+                descricao: '',
+                numero: '',
+                complemento: '',
+                bairro: '',
+                cidade: '',
+                cep: '',
+                uf: '',
+              }}
             >
               <Grid container>
                 <Grid
@@ -376,13 +392,15 @@ const Principal: React.FC = () => {
                     ]}
                   >
 
-                      <Input placeholder='Valor da doação'
-                        onChange={(e: any) => {
-                          formRef.setFieldsValue({
-                            valor: isReal(e.target.value),
-                          });
-                          setValorModifyValorDebito(e.target.value);
-                        }}
+                      <Input
+                      type={"number"}
+                      placeholder='Valor da doação'
+                      onChange={(e: any) => {
+                        formRef.setFieldsValue({
+                          valor: isReal(e.target.value),
+                        });
+                        setValorModifyValorDebito(e.target.value);
+                      }}
                       />
 
                   </Form.Item>
@@ -507,7 +525,6 @@ const Principal: React.FC = () => {
                                 name="complemento"
                                   rules={
                                     [
-                                      { required: true, message: "Campo obrigatório" },
                                       { max: 45, message: 'Máximo de 45 caracteres' },
                                     ]
                                   }

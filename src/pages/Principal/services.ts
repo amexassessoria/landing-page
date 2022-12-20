@@ -1,27 +1,21 @@
 import api from '@http/api';
 
-const config = {
-  headers: {
-    'Content-Type': 'application/json',
-    'accept':'application/json'
-  },
-};
 
 export interface IRequestCreatePessoa {
-  pessoa: {
+  pessoa?: {
     nome: string;
     cpfcnpj: string;
     email: string;
     telefone: string;
   };
-  doacao: {
-    valor: number;
+  doacao?: {
+    valor: any;
     cartao: boolean;
     boleto: boolean;
     pix: boolean;
     recorrente: boolean;
   };
-  endereco: {
+  endereco?: {
     descricao: string;
     numero: string;
     complemento: string;
@@ -30,19 +24,21 @@ export interface IRequestCreatePessoa {
     cep: string;
     uf: string;
   };
-  entidade?: {
+  entidade: {
     nome: string;
   };
-  campanha?:{
+  campanha:{
     descricao: string;
   };
 }
 
 class PageCadastroPessoaServices {
 
+
+
   public async CreatePessoa(pessoa: IRequestCreatePessoa) {
     return await api
-      .post('', pessoa)
+      .post('api/site/CriarCadastroComCobranca', pessoa)
       .then(response => {
 
         return {
