@@ -9,7 +9,7 @@ export interface IRequestCreatePessoa {
     telefone: string;
   };
   doacao?: {
-    valor: any;
+    valor: number;
     cartao: boolean;
     boleto: boolean;
     pix: boolean;

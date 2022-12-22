@@ -87,7 +87,7 @@ const Principal: React.FC = () => {
         telefone: values.telefone,
       },
       doacao: {
-        valor: ClearString(valorModifyValorDebito) / 100 * 100,
+       valor: ClearString(valorModifyValorDebito) / 100 * 100,
 
         cartao: values.cartao === undefined
           ?false
@@ -133,10 +133,9 @@ const Principal: React.FC = () => {
 
     }
 
-    //window.location.reload();
-
     setLoadingCreatePessoa(false);
 
+   window.location.reload();
 
   }
 
@@ -390,11 +389,16 @@ const Principal: React.FC = () => {
                     name="valor"
                     rules={[
                       { required: true, message: 'Campo obrigatório' },
+                      {  pattern: /^[0-9]+$/,
+                      message: 'Por favor digite somente números!' },
+
+
                     ]}
                   >
 
                       <Input
-                      type={"number"}
+
+                      type={"text"}
                       placeholder='Valor da doação'
                       onChange={(e: any) => {
                         formRef.setFieldsValue({
