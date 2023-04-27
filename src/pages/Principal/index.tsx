@@ -198,7 +198,7 @@ const Principal: React.FC = () => {
         <img src={LogoCLickDoBem} style={{ width: 210 }} />
           </Grid>
           <Grid item lg={8} sm={8} xs={12} style={{marginTop: 40}} justify="center" >
-            <TitlePage>Através da sua doação, levaremos alegria, amor e esperança para todos animaizinhos.</TitlePage>
+            <TitlePage>Através da sua doação, levaremos alegria, amor e esperança para todos animaizinhos!</TitlePage>
           </Grid>
 
         </Grid>
