@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const TitlePage = styled.h1`
   font-weight: bold;
-  color: #567220;
+  color: #104c80;
   margin-left: 10px;
   font-size: 22px;
   line-height: 35px;
