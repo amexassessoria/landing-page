@@ -7,7 +7,9 @@
 }
 
 .ant-form-item-label > label {
-  font-size: 12px;
+  font-weight: 500;
+  font-size: 14px;
+  margin: 12px 0 5px 0;
 }
 
 .ant-form-item {
@@ -17,23 +19,32 @@
 
 .ant-input:focus,
 .ant-input-focused {
-  border-color: #84c5f0;
-  border-right-width: 1px !important;
+  border-color: #A2B2C8 ;
+  border: #A2B2C8;
+  border-right-width: 10px !important;
   outline: 0;
-  -webkit-box-shadow: #84c5f033;
-  box-shadow: 0 0 0 2px #84c5f033;
+  -webkit-box-shadow: #A2B2C8 ;
+  box-shadow: 0 0 0 2px #A2B2C8 ;
 }
 
-.ant-input {
-  background-color: #f1f1f1 !important;
-}
 
 .ant-select:not(.ant-select-customize-input) .ant-select-selector {
   position: relative;
-  background-color: #f1f1f1 !important;
-  border: 1px solid #d9d9d9;
-  height: 40px;
-  border-radius: 10px;
+  border: 1px solid #edf1f5;
+  background-color: #edf1f5 !important;
+  text-align: center;
+  border-radius: 25px!important;
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+    border-bottom-right-radius: 25px;
+    border-bottom-left-radius: 25px;
+  height: auto;
+  line-height: 2.6!important;
+  padding: 4px 8px!important;
+    padding-top: 4px;
+    padding-right: 8px;
+    padding-bottom: 4px;
+    padding-left: 8px;
   -webkit-transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
   transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
@@ -70,10 +81,22 @@
 }
 
 .ant-input {
-  background-color: #f1f1f1 !important;
+  border: 1px solid #edf1f5;
+  background-color: #edf1f5 ;
   text-align: center;
-  border-radius: 10px;
-  height: 40px;
+  border-radius: 25px!important;
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+    border-bottom-right-radius: 25px;
+    border-bottom-left-radius: 25px;
+  height: auto;
+  line-height: 2.6!important;
+  padding: 4px 8px!important;
+    padding-top: 4px;
+    padding-right: 8px;
+    padding-bottom: 4px;
+    padding-left: 8px;
+
 }
 
 .ant-form-vertical .ant-form-item {
@@ -106,21 +129,22 @@
 }
 
 .ant-radio-checked::after {
-  border: 1px solid #84c5f0;
+  border: 1px solid #142741;
+  color: #a38b7f;
 }
 
 .ant-radio-checked .ant-radio-inner {
-  border-color: #40455a;
+  border-color: #142741;
 }
 
 .ant-radio-wrapper:hover .ant-radio,
 .ant-radio:hover .ant-radio-inner,
 .ant-radio-input:focus + .ant-radio-inner {
-  border-color: #40455a;
+  border-color: #142741;
 }
 
 .ant-radio-inner::after {
-  background-color: #40455a;
+  background-color: #142741;
 }
 
 .ant-form-item-label
@@ -159,6 +183,12 @@
 .ant-input-affix-wrapper {
   background-color: #f1f1f1 !important;
 }
+
+.ant-input:hover {
+  border-color: #edf1f5;
+  border-right-width: 1px !important;
+}
+
 
 .suggestions {
   width: 100%;
@@ -240,3 +270,158 @@
 .ant-spin-nested-loading {
   width: 100%;
 }
+
+.ant-checkbox-wrapper {
+  box-sizing: border-box;
+  background-color: #a38b7f ;
+  border: 3px solid #a38b7f ;
+  border-radius: 15px;
+  margin: 0 auto;
+  padding: 5.5px 19px 3.5px 16px;
+  width: 195px;
+  height: 50px;
+  color: #f1f1f1;
+}
+
+.ant-checkbox {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  color: #f1f1f1;
+  font-size: 14px;
+  font-variant: tabular-nums;
+  line-height: 1.5715;
+  list-style: none;
+  font-feature-settings: 'tnum', "tnum";
+  position: relative;
+  top: 0.2em;
+  line-height: 1;
+  white-space: nowrap;
+  outline: none;
+  cursor: pointer;
+  text-align: center;
+  padding-left: 1px;
+  padding-top: 1px;
+
+}
+
+.ant-checkbox-inner {
+  position: relative;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 20px;
+  height: 20px;
+  direction: ltr;
+  background-color: #fff;
+  border: 1px solid #d9d9d9;
+  border-radius: 2px;
+  border-collapse: separate;
+  transition: all 0.3s;
+  border-radius: 10px;
+
+}
+
+.ant-checkbox-checked::after {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 1px solid #a38b7f ;
+  border-radius: 2px;
+  visibility: hidden;
+  -webkit-animation: antCheckboxEffect 0.36s ease-in-out;
+          animation: antCheckboxEffect 0.36s ease-in-out;
+  -webkit-animation-fill-mode: backwards;
+          animation-fill-mode: backwards;
+  content: '';
+}
+
+.ant-checkbox-checked .ant-checkbox-inner::after {
+    position: absolute;
+    display: table;
+    border: 2px solid #a38b7f;
+    border-top: 0;
+    border-left: 0;
+    transform: rotate(45deg) scale(1) translate(-50%, -50%);
+    opacity: 1;
+    transition: all 0.2s cubic-bezier(0.12, 0.4, 0.29, 1.46) 0.1s;
+    content: ' ';
+}
+
+
+.ant-checkbox-checked .ant-checkbox-inner {
+  background-color: #ffffff;
+  border-color: #a38b7f;
+}
+
+.ant-checkbox-wrapper:hover .ant-checkbox-inner, .ant-checkbox:hover .ant-checkbox-inner, .ant-checkbox-input:focus + .ant-checkbox-inner {
+  border-color: #a38b7f;
+}
+
+
+.ant-radio-wrapper {
+  box-sizing: border-box;
+  background-color: rgb(255, 255, 255) ;
+  border: 1px solid #142741;
+  border-radius: 28px;
+  margin: 0 auto;
+  padding: 5.5px 19px 3.5px 16px;
+  width: 140px;
+  height: 100px;
+  color: #142741;
+  font-size: 14px;
+  padding-top: 30px;
+}
+
+
+.ant-form label {
+  font-size: 15px;
+}
+
+
+.usable-creditcard-form .wrapper {
+  border: 1px solid #CCC;
+  border-top: 1px solid #AAA;
+  border-right: 1px solid #AAA;
+  height: 74px;
+  width: 300px;
+  position: relative;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+}
+
+
+.ant-radio-button-wrapper:first-child:last-child{
+  box-sizing: border-box;
+  background-color: rgb(255, 255, 255) ;
+  border: 1px solid #142741;
+  border-radius: 28px;
+  margin: 0 auto;
+  padding: 5.5px 19px 3.5px 16px;
+  width: 140px;
+  height: 90px;
+  color: #142741;
+  font-size: 14px;
+  padding-top: 30px;
+}
+
+.ant-radio-button-wrapper > .ant-radio-button {
+  box-sizing: border-box;
+  border-radius: 28px;
+  margin: 0 auto;
+  padding: 5.5px 19px 3.5px 16px;
+  color: #fff !important;
+  background-color: #142741;
+  font-size: 14px;
+  padding-top: 30px;
+}
+
+.ant-radio-button-wrapper-checked:not([class*=' ant-radio-button-wrapper-disabled']).ant-radio-button-wrapper:first-child {
+  border: #142741;
+  color: #fff
+}
+
+
